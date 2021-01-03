@@ -1,0 +1,71 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Fyyur | Venues{% endblock %}
+{% block content %}
+    <style>
+        .items {
+            list-style: none;
+            padding-left: 0;
+            width: 300px;
+          }
+         .venue {
+                clear: both;
+                display: flex;
+              }
+         li .delete-venue {
+                -webkit-appearance: none;
+                border: none;
+                outline: none;
+                color: red;
+                float: right;
+                cursor: pointer;
+                font-size: 16px;
+                height: 20px;
+                margin-left: 10px;
+                background-color: #ffffff;
+              }
+        li .delete-venue:hover {
+
+                color: #ad0404;
+
+              }
+        </style>
+
+{% for area in areas %}
+<h3>{{ area.city }}, {{ area.state }}</h3>
+	<ul class="items">
+		{% for venue in area.venues %}
+		<li class="venue">
+			<a href="/venues/{{ venue.id }}">
+				<i class="fas fa-music"></i>
+				<div class="item">
+					<h5>{{ venue.name }}</h5>
+				</div>
+			</a>
+            <button class="delete-venue" data-id="{{ venue.id }}">&cross;</button>
+
+		</li>
+		{% endfor %}
+	</ul>
+{% endfor %}
+    <script>
+    let deleteBtns = document.querySelectorAll(".delete-venue");
+     for (let i = 0; i < deleteBtns.length; i++) {
+        const deleteBtn = deleteBtns[i];
+        deleteBtn.onclick = function(e) {
+          console.log("Delete event: ", e);
+          const venueId = e.target.dataset.id;
+          fetch( '/venues/'+venueId,{
+            method: 'DELETE'
+          }).then(function() {
+            console.log('Parent?', e.target);
+            const item = e.target.parentElement;
+            item.remove();
+            })
+            .catch(function(e) {
+              console.error(e);
+             });
+        };
+      }
+
+    </script>
+{% endblock %}
